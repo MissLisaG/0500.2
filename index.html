@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGCSE English 0500 Learning App</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="confetti"></canvas>
+
+<!-- Audio for text-to-speech -->
+<audio id="audioPlayer" style="display:none"></audio>
+
+<div class="container">
+<!-- Header -->
+<div class="header">
+<h1>Cambridge IGCSE First Language English 0500</h1>
+<p>Master your reading and writing skills</p>
+<div class="progress-bar-container">
+<div class="progress-bar" id="overallProgress"></div>
+</div>
+</div>
+
+<!-- Stats Dashboard -->
+<div class="stats">
+<div class="stat-card">
+<div class="label">Level</div>
+<div class="value" id="levelDisplay">1</div>
+</div>
+<div class="stat-card">
+<div class="label">XP</div>
+<div class="value" id="xpDisplay">0</div>
+</div>
+<div class="stat-card">
+<div class="label">Streak</div>
+<div class="value" id="streakDisplay">0</div>
+<div style="font-size:10px;color:#718096;margin-top:3px">🔥 days</div>
+</div>
+<div class="stat-card">
+<div class="label">Badges</div>
+<div class="value" id="badgesDisplay">0</div>
+</div>
+<div class="stat-card">
+<div class="label">Mastery</div>
+<div class="value" id="masteryDisplay">0%</div>
+</div>
+</div>
+
+<!-- Navigation Tabs -->
+<div class="nav-tabs">
+<button class="nav-tab active" data-tab="home">Home</button>
+<button class="nav-tab" data-tab="paper1">Paper 1</button>
+<button class="nav-tab" data-tab="paper2">Paper 2</button>
+<button class="nav-tab" data-tab="practice">Practice Mode</button>
+<button class="nav-tab" data-tab="analytics">Analytics</button>
+<button class="nav-tab" data-tab="badges">Badges</button>
+<button class="nav-tab" data-tab="progress">Progress</button>
+<button class="nav-tab" data-tab="help">Help</button>
+</div>
+
+<!-- Main Content Area -->
+<div class="content">
+<!-- Home Section -->
+<div id="homeSection" class="section active">
+<h2 class="section-title">Welcome to Your Learning Journey</h2>
+<p class="section-description">
+This app will help you master the skills needed for Cambridge IGCSE First Language English. 
+Choose a paper below to begin practicing.
+</p>
+<div class="mode-selector">
+<div class="mode-card" onclick="setMode('practice')">
+<div class="mode-icon">📚</div>
+<div class="mode-title">Practice Mode</div>
+<div class="mode-description">Learn at your own pace with hints and feedback</div>
+</div>
+<div class="mode-card" onclick="setMode('test')">
+<div class="mode-icon">⏱️</div>
+<div class="mode-title">Test Mode</div>
+<div class="mode-description">Timed exam simulation with no hints</div>
+</div>
+</div>
+<div class="topic-list">
+<div class="topic-card" data-paper="paper1">
+<div class="topic-header">
+<div class="topic-title">Paper 1: Reading</div>
+<div class="topic-badge badge-new" id="paper1Badge">Start</div>
+</div>
+<div class="topic-description">Reading comprehension and summary writing</div>
+<div class="topic-progress" id="paper1Progress">0% Complete</div>
+</div>
+<div class="topic-card" data-paper="paper2">
+<div class="topic-header">
+<div class="topic-title">Paper 2: Writing</div>
+<div class="topic-badge badge-new" id="paper2Badge">Start</div>
+</div>
+<div class="topic-description">Directed writing and composition</div>
+<div class="topic-progress" id="paper2Progress">0% Complete</div>
+</div>
+</div>
+</div>
+
+<!-- Paper 1 Section -->
+<div id="paper1Section" class="section">
+<div id="paper1Topics"></div>
+</div>
+
+<!-- Paper 2 Section -->
+<div id="paper2Section" class="section">
+<div id="paper2Topics"></div>
+</div>
+
+<!-- Practice Mode Section -->
+<div id="practiceSection" class="section">
+<div class="practice-controls">
+<button class="btn btn-secondary" id="backButton">← Back to Topics</button>
+<div class="difficulty-selector">
+<label>Difficulty:</label>
+<select id="difficultySelect">
+<option value="easy">Easy</option>
+<option value="medium" selected>Medium</option>
+<option value="hard">Hard</option>
+</select>
+</div>
+<button class="btn btn-secondary" id="ttsButton">🔊 Read Aloud</button>
+</div>
+<div id="timerDisplay" class="timer"></div>
+<div id="practiceContent"></div>
+</div>
+
+<!-- Analytics Section -->
+<div id="analyticsSection" class="section">
+<h2 class="section-title">Your Analytics Dashboard</h2>
+<div class="analytics-grid">
+<div class="analytics-card">
+<h3>Performance Overview</h3>
+<canvas id="performanceChart"></canvas>
+</div>
+<div class="analytics-card">
+<h3>Time Spent</h3>
+<div id="timeStats"></div>
+</div>
+<div class="analytics-card">
+<h3>Strengths & Weaknesses</h3>
+<div id="strengthsWeaknesses"></div>
+</div>
+<div class="analytics-card">
+<h3>Progress Timeline</h3>
+<canvas id="timelineChart"></canvas>
+</div>
+</div>
+</div>
+
+<!-- Badges Section -->
+<div id="badgesSection" class="section">
+<h2 class="section-title">Your Badges</h2>
+<div class="badges-container" id="badgesContainer"></div>
+</div>
+
+<!-- Progress Section -->
+<div id="progressSection" class="section">
+<h2 class="section-title">Your Progress Report</h2>
+<div class="progress-controls">
+<button class="btn btn-success" id="downloadReport">Download Report</button>
+<button class="btn btn-secondary" id="exportProgress">Export Progress</button>
+<button class="btn btn-secondary" id="importProgress">Import Progress</button>
+<input type="file" id="importFile" style="display:none" accept=".json">
+<button class="btn btn-danger" id="resetProgress">Reset Progress</button>
+</div>
+<div id="progressDetails"></div>
+</div>
+
+<!-- Help Section -->
+<div id="helpSection" class="section">
+<div class="help-section">
+<h2>How to Use This App</h2>
+<h3>Getting Started</h3>
+<ul>
+<li>Navigate using tabs at the top</li>
+<li>Choose Practice or Test mode</li>
+<li>Select difficulty level for personalized learning</li>
+<li>Click topics to start practicing</li>
+</ul>
+
+<h3>Practice vs Test Mode</h3>
+<ul>
+<li><strong>Practice Mode:</strong> Unlimited hints, immediate feedback, learn at your pace</li>
+<li><strong>Test Mode:</strong> Timed questions, no hints, exam simulation</li>
+</ul>
+
+<h3>Mastery System</h3>
+<ul>
+<li>Achieve 80% mastery in each topic to complete it</li>
+<li>Get detailed feedback and retry incorrect answers</li>
+<li>Build your streak by practicing daily</li>
+<li>Track detailed analytics of your performance</li>
+</ul>
+
+<h3>Answer Assessment</h3>
+<ul>
+<li>Answers evaluated on KEY CONCEPTS, not exact phrasing</li>
+<li>Synonyms and paraphrasing are accepted</li>
+<li>Maintain correct spelling and grammar</li>
+<li>After 2 failed attempts, receive worked examples</li>
+</ul>
+
+<h3>Accessibility Features</h3>
+<ul>
+<li>🔊 Text-to-speech: Click "Read Aloud" to hear questions</li>
+<li>Adjustable difficulty levels</li>
+<li>Keyboard navigation support</li>
+</ul>
+
+<h3>Gamification</h3>
+<ul>
+<li>Earn XP for correct answers (20 XP short, 50 XP long)</li>
+<li>Level up every 100 XP</li>
+<li>Unlock badges by completing challenges</li>
+<li>Maintain daily streak for bonus rewards</li>
+</ul>
+
+<h3>Data Management</h3>
+<ul>
+<li>Progress saves automatically</li>
+<li>Export/Import to backup or transfer devices</li>
+<li>Download detailed reports for teachers</li>
+<li>View comprehensive analytics</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Load JavaScript -->
+<script src="questions.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
